@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aula Virtual - Tipos de Redes Mejorado</title>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<!-- Google Fonts: Poppins -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  /* Reset & base */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  html, body {
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+    background-color: #000;
+    color: #ddd;
+  }
+  body {
+    overflow-x: hidden;
+  }
+  /* Loader */
+  #loader {
+    position: fixed;
+    z-index: 2000;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .loader-icon {
+    border: 6px solid #4b1a58; /* darker neon purple border */
+    border-top: 6px solid #9b59b6; /* neon purple */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1.2s linear infinite;
+    box-shadow:
+      0 0 10px #9b59b6,
+      0 0 20px #9b59b6,
+      0 0 30px #9b59b6;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  /* Navbar */
+  nav {
+    background-color: rgba(27, 9, 41, 0.9);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #5a2a7e;
+  }
+  .navbar-brand {
+    font-weight: 600;
+    color: #9b59b6 !important;
+    letter-spacing: 1.2px;
+    font-size: 1.6rem;
+  }
+  .nav-link {
+    color: #ccc !important;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  .nav-link:hover, .nav-link.active {
+    color: #d39afc !important;
+    text-shadow: 0 0 8px #9b59b6;
+  }
+  /* Container */
+  .container-main {
+    max-width: 1000px;
+    margin: 48px auto 100px;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+  /* Headings */
+  h1, h2, h3 {
+    color: #d4b3ff;
+    text-shadow: 0 0 14px #9b59b6;
+  }
+  h1 {
+    font-weight: 700;
+    font-size: 3.2rem;
+    margin-bottom: 16px;
+  }
+  h2 {
+    font-weight: 600;
+    margin-bottom: 24px;
+    border-left: 4px solid #9b59b6;
+    padding-left: 14px;
+  }
+  h3 {
+    margin-bottom: 8px;
+  }
+  /* Paragraphs */
+  p {
+    line-height: 1.7;
+    color: #ccc;
+    font-size: 1.15rem;
+    margin-bottom: 22px;
+  }
+  /* Sections - spacing and background */
+  section {
+    background: rgba(54, 12, 88, 0.25);
+    border-radius: 16px;
+    padding: 32px 32px 40px;
+    box-shadow: 0 0 18px 1.5px #9b59b6a0;
+  }
+  /* Floating neon shapes container */
+  #floating-elements {
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: visible;
+    z-index: 10;
+  }
+  /* Floating shapes */
+  .floating-shape {
+    position: absolute;
+    background: transparent;
+    border: 2px solid #9b59b6;
+    box-shadow: 0 0 12px #9b59b6, 0 0 24px #9b59b6;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation-timing-function: ease-in-out;
+  }
+  .shape1 {
+    width: 70px; height: 70px;
+    top: 5%;
+    left: 6%;
+    animation: floatUpDown 5s infinite alternate;
+  }
+  .shape2 {
+    width: 50px; height: 50px;
+    top: 25%;
+    right: 10%;
+    animation: floatLeftRight 6.5s infinite alternate;
+  }
+  .shape3 {
+    width: 100px; height: 100px;
+    bottom: 10%;
+    left: 15%;
+    animation: floatUpDown 8s infinite alternate;
+  }
+  .shape4 {
+    width: 45px; height: 45px;
+    bottom: 27%;
+    right: 30%;
+    animation: floatLeftRight 7s infinite alternate;
+  }
+  @keyframes floatUpDown {
+    0% { transform: translateY(0) rotate(0deg);}
+    100% { transform: translateY(25px) rotate(15deg);}
+  }
+  @keyframes floatLeftRight {
+    0% { transform: translateX(0) rotate(0deg);}
+    100% { transform: translateX(25px) rotate(-15deg);}
+  }
+  /* Modern moving background - simplified grid lines with noticeable motion */
+  #background-graphic {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+    stroke: #6f2fa39f;
+    stroke-width: 1.2;
+    fill:none;
+    animation: moveGrid 30s linear infinite;
+  }
+  @keyframes moveGrid {
+    0% { transform: translate(0px, 0px) }
+    100% { transform: translate(-150px, -150px) }
+  }
+  /* Content layout for images and text side by side in sections */
+  .content-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    align-items: center;
+  }
+  .text-block {
+    flex: 1 1 350px;
+  }
+  .image-block {
+    flex: 1 1 320px;
+    min-width: 280px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 0 30px #9b59b6a0;
+  }
+  .image-block img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  /* Quiz styling */
+  #quiz-section {
+    background: rgba(72, 20, 120, 0.3);
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 0 26px 2px #9b59b6b0;
+  }
+  #quiz-section h2 {
+    margin-bottom: 20px;
+  }
+  .quiz-question {
+    margin-bottom: 22px;
+  }
+  .quiz-options label {
+    display: block;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    background: #220044;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+  }
+  .quiz-options input[type="radio"] {
+    display: none;
+  }
+  .quiz-options input[type="radio"]:checked + label {
+    background-color: #9b59b6;
+    color: #fff;
+    box-shadow: 0 0 14px #d39afc;
+  }
+  .btn-submit {
+    margin-top: 12px;
+    background: #9b59b6;
+    border: none;
+    color: white;
+    padding: 10px 26px;
+    border-radius: 14px;
+    font-weight: 600;
+    box-shadow: 0 0 18px #d39afc;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+  }
+  .btn-submit:hover {
+    background: #b57bde;
+  }
+  #quiz-result {
+    margin-top: 18px;
+    font-weight: 600;
+    font-size: 1.15rem;
+    color: #d39afc;
+    text-shadow: 0 0 12px #9b59b6;
+  }
+  /* Responsive adjustments */
+  @media (max-width: 900px) {
+    .container-main {
+      padding: 0 20px;
+      margin: 32px auto 80px;
+      gap: 36px;
+    }
+    .content-row {
+      flex-direction: column;
+    }
+    .image-block, .text-block {
+      flex: none;
+      width: 100%;
+    }
+  }
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 2rem;
+    }
+    h2 {
+      font-size: 1.4rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader" aria-label="Cargando contenido de la página virtual...">
+  <div class="loader-icon"></div>
+</div>
+
+<!-- Modern grid background - thin lines to simulate academic structures -->
+<svg id="background-graphic" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet" >
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="translate(0,0)">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#6f2fa39f" stroke-width="1" />
+    </pattern>
+  </defs>
+  <rect width="1200" height="800" fill="url(#grid)" />
+</svg>
+
+<!-- Floating neon elements -->
+<div id="floating-elements" aria-hidden="true">
+  <div class="floating-shape shape1" style="border-radius: 10% / 50%;"></div>
+  <div class="floating-shape shape2" style="border-radius: 50% / 10%;"></div>
+  <div class="floating-shape shape3" style="border-radius: 30% / 70%;"></div>
+  <div class="floating-shape shape4" style="border-radius: 60% / 40%;"></div>
+</div>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-md sticky-top" aria-label="Navegación principal">
+  <div class="container">
+    <a class="navbar-brand" href="#">AulaVirtual</a>
+    <button class="navbar-toggler btn btn-outline-purple" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Alternar navegación">
+      <span class="text-purple">&#9776;</span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto gap-3">
+        <li class="nav-item"><a class="nav-link active" href="#principal" tabindex="0">Principal</a></li>
+        <li class="nav-item"><a class="nav-link" href="#actividades" tabindex="0">Actividades</a></li>
+        <li class="nav-item"><a class="nav-link" href="#lecciones" tabindex="0">Lecciones</a></li>
+              <li class="nav-item"><a class="nav-link" href="#quiz-section" tabindex="0">Quiz</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="container-main" role="main">
+
+  <!-- Principal Section -->
+  <section id="principal" tabindex="0" aria-label="Sección principal">
+    <h1>Tipos de Redes: LAN, MAN y WAN</h1>
+    <p>Bienvenido a esta aula virtual dedicada a las diversas categorías de redes informáticas. En esta clase, aprenderás las características, diferencias y usos de las redes LAN, MAN y WAN.</p>
+  </section>
+
+  <!-- Actividades -->
+  <section id="actividades" tabindex="0" aria-label="Sección de actividades">
+    <h2>Actividades</h2>
+    <p>Para reforzar tus conocimientos, realiza las siguientes actividades prácticas sobre clasificación y características de redes. Identifica casos de uso y diseña ejemplos simples.</p>
+  </section>
+
+  <!-- Lecciones with images -->
+  <section id="lecciones" tabindex="0" aria-label="Sección de lecciones">
+    <h2>Lecciones</h2>
+
+    <article class="content-row" aria-label="Lección sobre red LAN">
+      <div class="text-block">
+        <h3>Red LAN (Local Area Network)</h3>
+        <p>Una red LAN conecta dispositivos dentro de un área local limitada, como una casa, oficina o edificio. Permite compartir recursos y servicios con alta velocidad y baja latencia.</p>
+      </div>
+      <div class="image-block" aria-label="Imagen representativa de una red LAN">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3bc1950c-c9ac-49c6-95b5-5149193067e6.png" alt="Ilustración moderna de un diagrama simple de una red LAN en tonos morados y negro" onerror="this.style.display='none'" />
+      </div>
+    </article>
+
+    <article class="content-row" aria-label="Lección sobre red MAN">
+      <div class="image-block order-md-2" aria-label="Imagen representativa de una red MAN">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6dbedd61-6a03-4efd-a24c-676743c4d8b0.png" alt="Ilustración moderna de una red MAN cubriendo áreas metropolitanas con conexión en tonos morados y negro" onerror="this.style.display='none'" />
+      </div>
+      <div class="text-block order-md-1">
+        <h3>Red MAN (Metropolitan Area Network)</h3>
+        <p>La red MAN abarca áreas metropolitanas, conectando varias LANs distribuidas en una ciudad o campus con cobertura media. Es usada en organizaciones con varias oficinas locales.</p>
+      </div>
+    </article>
+
+    <article class="content-row" aria-label="Lección sobre red WAN">
+      <div class="text-block">
+        <h3>Red WAN (Wide Area Network)</h3>
+        <p>Las redes WAN tienen un alcance geográfico amplio, interconectando dispositivos en diferentes ciudades o países. Internet es el ejemplo más conocido de red WAN.</p>
+      </div>
+      <div class="image-block" aria-label="Imagen representativa de una red WAN">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/8c170a31-fdc2-41f9-8d31-f16e8f44c06b.png" alt="Gráfico moderno ilustrando una red WAN con conexiones globales en tonos morados" onerror="this.style.display='none'" />
+      </div>
+    </article>
+  </section>
+
+  
+
+  <!-- Quiz Section -->
+  <section id="quiz-section" tabindex="0" aria-label="Sección del quiz de tipos de redes">
+    <h2>Quiz - Tipos de Redes</h2>
+    <form id="quizForm" aria-describedby="quizResult">
+      <div class="quiz-question" role="group" aria-labelledby="q1-label">
+        <p id="q1-label"><strong>1. ¿Qué tipo de red conecta dispositivos dentro de un área local como una casa u oficina?</strong></p>
+        <div class="quiz-options">
+          <input type="radio" id="q1a1" name="q1" value="LAN" required />
+          <label for="q1a1">LAN</label>
+
+          <input type="radio" id="q1a2" name="q1" value="WAN" />
+          <label for="q1a2">WAN</label>
+
+          <input type="radio" id="q1a3" name="q1" value="MAN" />
+          <label for="q1a3">MAN</label>
+        </div>
+      </div>
+      <div class="quiz-question" role="group" aria-labelledby="q2-label">
+        <p id="q2-label"><strong>2. ¿Cuál es una red que cubre un área metropolitana, conectando varias oficinas?</strong></p>
+        <div class="quiz-options">
+          <input type="radio" id="q2a1" name="q2" value="WAN" required />
+          <label for="q2a1">WAN</label>
+
+          <input type="radio" id="q2a2" name="q2" value="MAN" />
+          <label for="q2a2">MAN</label>
+
+          <input type="radio" id="q2a3" name="q2" value="LAN" />
+          <label for="q2a3">LAN</label>
+        </div>
+      </div>
+      <div class="quiz-question" role="group" aria-labelledby="q3-label">
+        <p id="q3-label"><strong>3. ¿Qué red tiene un alcance geográfico amplio y conecta diferentes ciudades o países?</strong></p>
+        <div class="quiz-options">
+          <input type="radio" id="q3a1" name="q3" value="MAN" required />
+          <label for="q3a1">MAN</label>
+
+          <input type="radio" id="q3a2" name="q3" value="LAN" />
+          <label for="q3a2">LAN</label>
+
+          <input type="radio" id="q3a3" name="q3" value="WAN" />
+          <label for="q3a3">WAN</label>
+        </div>
+      </div>
+      <button type="submit" class="btn-submit" aria-label="Enviar respuestas del quiz">Enviar Respuestas</button>
+      <div id="quizResult" role="alert" aria-live="polite"></div>
+    </form>
+  </section>
+
+</main>
+
+<!-- Bootstrap and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Loader hide logic
+  window.addEventListener('load', () => {
+    const loader = document.getElementById('loader');
+    if (loader) {
+      loader.style.opacity = '0';
+      setTimeout(() => loader.style.display = 'none', 500);
+    }
+  });
+
+  // Quiz functionality
+  const quizForm = document.getElementById('quizForm');
+  const quizResult = document.getElementById('quizResult');
+  const correctAnswers = {
+    q1: 'LAN',
+    q2: 'MAN',
+    q3: 'WAN'
+  };
+
+  quizForm.addEventListener('submit', e => {
+    e.preventDefault();
+    let score = 0;
+    const formData = new FormData(quizForm);
+    for (const [key, value] of formData.entries()) {
+      if (correctAnswers[key] === value) {
+        score++;
+      }
+    }
+    let feedback = '';
+    switch (score) {
+      case 3:
+        feedback = '¡Excelente! Has respondido correctamente todas las preguntas.';
+        break;
+      case 2:
+        feedback = 'Muy bien, casi perfecto. Revisa un poco más para mejorar.';
+        break;
+      case 1:
+        feedback = 'Necesitas estudiar un poco más. Sigue intentando.';
+        break;
+      default:
+        feedback = 'Parece que necesitas más práctica. ¡Ánimo!';
+    }
+    quizResult.textContent = `Tu puntuación: ${score} / 3. ${feedback}`;
+  });
+</script>
+
+</body>
+</html>
+
