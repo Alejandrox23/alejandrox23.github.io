@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GreenGoal - Reforestación con Drones & Torneo de Fútbol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #f9fafb;
+        }
+        .hero {
+            background: linear-gradient(
+                rgba(0, 0, 0, 0.6),
+                rgba(0, 0, 0, 0.6)
+            ),
+            url('https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=2080&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+        .counter-bg {
+            background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+        }
+        .drone-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+        .soccer-icon {
+            animation: pulse 2s ease infinite;
+        }
+        .donation-card:hover {
+            transform: translateY(-10px);
+            box-shadow:
+                0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .fade-in {
+          opacity: 0;
+          animation: fadeIn 1.5s forwards;
+        }
+        .slide-up {
+          opacity: 0;
+          transform: translateY(30px);
+          animation: slideUp 1s forwards;
+        }
+        .slide-left {
+          opacity: 0;
+          transform: translateX(30px);
+          animation: slideLeft 1s forwards;
+        }
+        .slide-right {
+          opacity: 0;
+          transform: translateX(-30px);
+          animation: slideRight 1s forwards;
+        }
+        .pulse-hover:hover {
+          animation: pulseHover 1s infinite alternate;
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        @keyframes pulseHover {
+          0% { transform: scale(1); }
+          100% { transform: scale(1.1); }
+        }
+        @keyframes fadeIn {
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes slideLeft {
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        @keyframes slideRight {
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        .progress-bar {
+            transition: width 1s ease-in-out;
+        }
+        #countdown {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+        /* Eventos concierto */
+        #eventos .event-card {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          cursor: pointer;
+          border-radius: 1rem;
+        }
+        #eventos .event-card:hover {
+          transform: translateY(-10px) scale(1.05);
+          box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+        }
+        /* Testimonios competidores */
+        #competidores .testimonial {
+          background: #e0f2f1;
+          border-radius: 12px;
+          padding: 1.5rem;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+          margin-bottom: 1.5rem;
+          opacity: 0;
+          transform: translateY(20px);
+          animation: fadeInUp 1s forwards;
+        }
+        #competidores .testimonial:nth-child(1) { animation-delay: 0.2s; }
+        #competidores .testimonial:nth-child(2) { animation-delay: 0.4s; }
+        #competidores .testimonial:nth-child(3) { animation-delay: 0.6s; }
+        @keyframes fadeInUp {
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        /* Botón animado */
+        button {
+          transition: transform 0.3s ease;
+        }
+        button:hover {
+          transform: scale(1.1);
+          box-shadow: 0 0 8px #4caf50;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Barra de navegación -->
+    <nav class="bg-green-800 text-white shadow-lg fixed w-full z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold flex items-center">
+                <i class="fas fa-leaf mr-2"></i> GreenGoal
+            </a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#proyecto" class="hover:text-green-300 transition">Proyecto</a>
+                <a href="#drones" class="hover:text-green-300 transition">Drones</a>
+                <a href="#torneo" class="hover:text-green-300 transition">Torneo</a>
+                <a href="#eventos" class="hover:text-green-300 transition">Eventos</a>
+                <a href="#competidores" class="hover:text-green-300 transition">Competidores</a>
+                <a href="#donaciones" class="hover:text-green-300 transition">Donaciones</a>
+                <a href="#contacto" class="hover:text-green-300 transition">Contacto</a>
+            </div>
+            <button class="md:hidden focus:outline-none" id="menuBtn">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- Menú móvil -->
+        <div class="md:hidden hidden bg-green-700 shadow-lg" id="mobileMenu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col">
+                <a href="#proyecto" class="block px-3 py-2 hover:bg-green-600 rounded-md">Proyecto</a>
+                <a href="#drones" class="block px-3 py-2 hover:bg-green-600 rounded-md">Drones</a>
+                <a href="#torneo" class="block px-3 py-2 hover:bg-green-600 rounded-md">Torneo</a>
+                <a href="#eventos" class="block px-3 py-2 hover:bg-green-600 rounded-md">Eventos</a>
+                <a href="#competidores" class="block px-3 py-2 hover:bg-green-600 rounded-md">Competidores</a>
+                <a href="#donaciones" class="block px-3 py-2 hover:bg-green-600 rounded-md">Donaciones</a>
+                <a href="#contacto" class="block px-3 py-2 hover:bg-green-600 rounded-md">Contacto</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero section -->
+    <section
+      class="hero text-white pt-32 pb-20 px-4 flex items-center justify-center min-h-screen fade-in"
+    >
+        <div class="container mx-auto text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                Reforestación Inteligente <br />+ Torneo de Fútbol
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                Cada gol que marques en nuestro torneo se convertirá en árboles plantados
+                con drones en zonas deforestadas.
+            </p>
+            <div class="flex flex-col md:flex-row justify-center gap-4">
+                <a
+                  href="#donaciones"
+                  class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full transition transform hover:scale-105 pulse-hover"
+                >
+                    Haz una donación
+                </a>
+                <a
+                  href="#torneo"
+                  class="bg-white hover:bg-gray-100 text-green-800 font-bold py-3 px-6 rounded-full transition transform hover:scale-105 pulse-hover"
+                >
+                    Inscríbete al torneo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contador de impacto -->
+    <section class="counter-bg text-white py-8 slide-up">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap justify-around text-center">
+                <div class="p-4">
+                    <div class="text-3xl md:text-5xl font-bold mb-2">
+                        <span class="counter" data-target="12500">0</span>+
+                    </div>
+                    <p>Árboles plantados</p>
+                </div>
+                <div class="p-4">
+                    <div class="text-3xl md:text-5xl font-bold mb-2">
+                        <span class="counter" data-target="386">0</span>+
+                    </div>
+                    <p>Hectáreas reforestadas</p>
+                </div>
+                <div class="p-4">
+                    <div class="text-3xl md:text-5xl font-bold mb-2">
+                        <span class="counter" data-target="750">0</span>+
+                    </div>
+                    <p>Participantes en torneos</p>
+                </div>
+                <div class="p-4">
+                    <div class="text-3xl md:text-5xl font-bold mb-2">
+                        <span class="counter" data-target="120">0</span>+
+                    </div>
+                    <p>Comunidades beneficiadas</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección del proyecto -->
+    <section id="proyecto" class="py-16 px-4 bg-white slide-left">
+        <div class="container mx-auto">
+            <h2
+              class="text-3xl md:text-4xl font-bold text-center mb-12 text-green-800"
+            >
+                Nuestra Misión
+            </h2>
+
+            <div class="flex flex-col md:flex-row items-center gap-8 mb-16">
+                <div class="md:w-1/2">
+                    <h3 class="text-2xl font-bold mb-4 text-green-700">
+                        Uniendo Deporte y Ecología
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        GreenGoal es un proyecto innovador que combina la pasión por el fútbol con la tecnología de drones para reforestar áreas críticas.
+                        Cada participación en nuestro torneo y cada donación se traduce directamente en semillas plantadas por nuestros drones en zonas estratégicas.
+                    </p>
+                    <p class="text-gray-600">
+                        El torneo no solo es una competencia deportiva, sino una oportunidad para que jugadores, patrocinadores y espectadores se unan por una causa común: combatir el cambio climático y restaurar nuestros ecosistemas.
+                    </p>
+                </div>
+                <div class="md:w-1/2">
+                    <img
+                      src="https://images.unsplash.com/photo-1543351611-58f69d7c1781?q=80&w=2070&auto=format&fit=crop"
+                      alt="Equipo de fútbol plantando árboles"
+                      class="rounded-lg shadow-xl w-full"
+                    />
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row-reverse items-center gap-8">
+                <div class="md:w-1/2">
+                    <h3 class="text-2xl font-bold mb-4 text-green-700">
+                        Tecnología al Servicio del Planeta
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        Nuestros drones de última generación pueden plantar hasta 10,000 semillas por día en terrenos difíciles, con un 85% de tasa de germinación gracias a nuestras cápsulas biodegradables especiales.
+                    </p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Mapeo preciso con imágenes satelitales</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Selección de especies nativas basada en datos</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Monitoreo continuo del crecimiento</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="relative">
+                        <img
+                          src="https://images.unsplash.com/photo-1574001739947-52b2655c5852?q=80&w=2070&auto=format&fit=crop"
+                          alt="Drone plantando semillas"
+                          class="rounded-lg shadow-xl w-full"
+                        />
+                        <div
+                          class="absolute -bottom-6 -right-6 bg-green-600 text-white p-4 rounded-full drone-icon"
+                          title="Dron en acción"
+                        >
+                            <i class="fas fa-drone-alt text-3xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de drones -->
+    <section id="drones" class="py-16 px-4 bg-gray-50 slide-right">
+        <div class="container mx-auto">
+            <h2
+              class="text-3xl md:text-4xl font-bold text-center mb-12 text-green-800"
+            >
+                Tecnología de Drones
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div
+                  class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition"
+                >
+                    <div class="text-green-600 text-4xl mb-4">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Mapeo Inteligente</h3>
+                    <p class="text-gray-600">
+                        Nuestros drones cartografían el terreno con precisión para identificar las áreas óptimas de siembra y las especies más adecuadas.
+                    </p>
+                </div>
+                <div
+                  class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition"
+                >
+                    <div class="text-green-600 text-4xl mb-4">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Cápsulas Biodegradables</h3>
+                    <p class="text-gray-600">
+                        Las semillas vienen en cápsulas biodegradables con nutrientes que aumentan significativamente sus posibilidades de crecimiento.
+                    </p>
+                </div>
+                <div
+                  class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition"
+                >
+                    <div class="text-green-600 text-4xl mb-4">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Monitoreo Continuo</h3>
+                    <p class="text-gray-600">
+                        Realizamos vuelos periódicos para evaluar el crecimiento y salud de los árboles, generando reportes transparentes para nuestros donantes.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección del torneo -->
+    <section id="torneo" class="py-16 px-4 bg-green-700 text-white slide-up">
+        <div class="container mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+                Torneo GreenGoal
+            </h2>
+
+            <div class="flex flex-col lg:flex-row gap-8 mb-12">
+                <div class="lg:w-1/2 bg-white bg-opacity-10 p-6 rounded-lg">
+                    <div class="flex items-center mb-4">
+                        <div class="mr-4 soccer-icon">
+                            <i class="fas fa-futbol text-4xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold">Competición Solidaria</h3>
+                    </div>
+                    <p class="mb-4">
+                        Nuestro torneo es mucho más que un simple campeonato. Cada gol marcado,
+                        cada tarjeta amarilla (sí, incluso esas) y cada participación se convierte en árboles plantados.
+                    </p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-start">
+                            <i class="fas fa-futbol text-yellow-300 mr-2 mt-1"></i>
+                            <span>Cada gol = 5 árboles plantados</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-redo text-blue-300 mr-2 mt-1"></i>
+                            <span>Cada partido completado = 20 árboles</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-trophy text-yellow-500 mr-2 mt-1"></i>
+                            <span>Campeón del torneo = 100 árboles adicionales</span>
+                        </li>
+                    </ul>
+                    <div class="bg-green-800 p-4 rounded-lg mt-4">
+                        <h4 class="font-bold mb-2">Próximo torneo en:</h4>
+                        <div
+                          id="countdown"
+                          class="flex justify-center gap-4 text-2xl font-bold"
+                        >
+                            <div><span id="days">00</span><span class="text-sm">Días</span></div>
+                            <div><span id="hours">00</span><span class="text-sm">Horas</span></div>
+                            <div><span id="minutes">00</span><span class="text-sm">Min</span></div>
+                            <div><span id="seconds">00</span><span class="text-sm">Seg</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                  class="lg:w-1/2 bg-white bg-opacity-10 p-6 rounded-lg h-full flex flex-col justify-between"
+                >
+                    <h3
+                      class="text-2xl font-bold mb-4 flex items-center gap-3"
+                    >
+                        <i class="fas fa-users text-white text-3xl"></i> Inscripciones
+                        Abiertas
+                    </h3>
+                    <p class="mb-6">
+                        Forma parte del cambio: crea tu equipo y compite por una causa ambiental.
+                        ¡Todos los niveles son bienvenidos! Además, contarás con seguimiento digital
+                        y premiación especial.
+                    </p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-start">
+                            <i
+                              class="fas fa-calendar-check text-green-300 mr-2 mt-1"
+                            ></i>
+                            <span><strong>Inicio:</strong> 15 de julio</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i
+                              class="fas fa-map-marker-alt text-red-300 mr-2 mt-1"
+                            ></i>
+                            <span><strong>Lugar:</strong> Estadio Municipal de Loja</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i
+                              class="fas fa-users-cog text-purple-300 mr-2 mt-1"
+                            ></i>
+                            <span><strong>Modalidad:</strong> Fútbol 7 – Masculino / Femenino</span>
+                        </li>
+                    </ul>
+                    <a
+                      href="#contacto"
+                      class="inline-block mt-auto bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold py-3 px-6 rounded-full transition transform hover:scale-105 text-center"
+                    >
+                        ¡Inscribirme Ahora!
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de eventos de concierto -->
+    <section id="eventos" class="py-16 px-4 bg-white slide-left">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-green-800">
+                Eventos & Conciertos
+            </h2>
+            <p class="text-center max-w-xl mx-auto mb-12 text-gray-700">
+                Vive la experiencia de nuestros conciertos ecológicos acompañados por drones que plantan semillas, mientras el vuelo de cóndores virtuales crea un ambiente único.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="event-card bg-green-100 p-6 shadow-md rounded-lg hover:shadow-xl transition transform cursor-pointer">
+                    <h3 class="text-xl font-semibold mb-3">Concierto "Vuelo Verde"</h3>
+                    <p class="mb-3 text-gray-700">
+                        Una noche mágica con artistas locales, drones plantando semillas en vivo y sonidos ambientales de cóndores.
+                    </p>
+                    <p class="font-semibold text-green-700">Fecha: 10 de Agosto</p>
+                    <p class="font-semibold text-green-700">Lugar: Parque Central de Loja</p>
+                </div>
+                <div class="event-card bg-green-100 p-6 shadow-md rounded-lg hover:shadow-xl transition transform cursor-pointer">
+                    <h3 class="text-xl font-semibold mb-3">Festival EcoTech</h3>
+                    <p class="mb-3 text-gray-700">
+                        Música, tecnología y conciencia ambiental unidos con exhibición de drones plantadores y charla sobre conservación.
+                    </p>
+                    <p class="font-semibold text-green-700">Fecha: 24 de Agosto</p>
+                    <p class="font-semibold text-green-700">Lugar: Auditorio Municipal</p>
+                </div>
+                <div class="event-card bg-green-100 p-6 shadow-md rounded-lg hover:shadow-xl transition transform cursor-pointer">
+                    <h3 class="text-xl font-semibold mb-3">Noche con Cóndores</h3>
+                    <p class="mb-3 text-gray-700">
+                        Concierto con ambientación sonora y visual inspirada en los cóndores andinos, drones en acción y arte en vivo.
+                    </p>
+                    <p class="font-semibold text-green-700">Fecha: 7 de Septiembre</p>
+                    <p class="font-semibold text-green-700">Lugar: Teatro Loja</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección testimonios de competidores -->
+    <section id="competidores" class="py-16 px-4 bg-green-50 slide-right">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-green-900">
+                Lo que dicen los competidores
+            </h2>
+
+            <div>
+                <div class="testimonial">
+                    <p class="mb-4 italic text-gray-800">
+                        "Participar en GreenGoal fue increíble, no solo jugué fútbol sino que sentí que realmente estaba ayudando al planeta."
+                    </p>
+                    <p class="font-semibold text-green-700">— María López, jugadora</p>
+                </div>
+                <div class="testimonial">
+                    <p class="mb-4 italic text-gray-800">
+                        "La tecnología de drones es impresionante, ver cómo cada gol se traduce en árboles plantados me motivó mucho."
+                    </p>
+                    <p class="font-semibold text-green-700">— Carlos Medina, entrenador</p>
+                </div>
+                <div class="testimonial">
+                    <p class="mb-4 italic text-gray-800">
+                        "Una experiencia única que combina deporte, tecnología y cuidado ambiental. ¡Esperamos volver el próximo año!"
+                    </p>
+                    <p class="font-semibold text-green-700">— Equipo Los Cóndores</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de donaciones -->
+    <section
+      id="donaciones"
+      class="py-16 px-4 bg-white text-green-900 slide-up"
+    >
+        <div class="container mx-auto max-w-7xl">
+            <h2
+              class="text-3xl md:text-4xl font-bold text-center mb-12"
+            >
+                Opciones de Donación
+            </h2>
+
+            <div
+              class="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto"
+            >
+                <div
+                  class="donation-card bg-green-100 p-6 rounded-lg shadow-md hover:shadow-lg transition transform"
+                >
+                    <h3 class="text-xl font-bold mb-4">Donación Individual</h3>
+                    <p class="mb-4">
+                        Con tan solo $50 puedes plantar 10 árboles y recibir tu certificado digital.
+                    </p>
+                    <ul class="mb-6 list-disc list-inside text-green-700">
+                        <li>Certificado con coordenadas GPS</li>
+                        <li>Reporte trimestral del crecimiento</li>
+                    </ul>
+                    <button
+                      class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Donar $50
+                    </button>
+                </div>
+
+                <div
+                  class="donation-card bg-green-100 p-6 rounded-lg shadow-md hover:shadow-lg transition transform"
+                >
+                    <h3 class="text-xl font-bold mb-4">Donación Empresarial</h3>
+                    <p class="mb-4">
+                        Apoya la reforestación con un plan de donación mensual o anual.
+                    </p>
+                    <ul class="mb-6 list-disc list-inside text-green-700">
+                        <li>Reporte personalizado para tu empresa</li>
+                        <li>Publicidad en eventos y redes sociales</li>
+                    </ul>
+                    <button
+                      class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Contactar
+                    </button>
+                </div>
+
+                <div
+                  class="donation-card bg-green-100 p-6 rounded-lg shadow-md hover:shadow-lg transition transform"
+                >
+                    <h3 class="text-xl font-bold mb-4">Donación en Especies</h3>
+                    <p class="mb-4">
+                        Apoya con equipo tecnológico o recursos logísticos para drones.
+                    </p>
+                    <ul class="mb-6 list-disc list-inside text-green-700">
+                        <li>Reconocimiento público</li>
+                        <li>Invitación a eventos exclusivos</li>
+                    </ul>
+                    <button
+                      class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Consultar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección contacto -->
+    <section
+      id="contacto"
+      class="py-16 px-4 bg-green-800 text-white"
+    >
+        <div class="container mx-auto max-w-3xl">
+            <h2
+              class="text-3xl md:text-4xl font-bold text-center mb-12"
+            >
+                Contáctanos
+            </h2>
+            <form class="bg-green-700 p-8 rounded-lg shadow-lg" action="#" method="POST">
+                <div class="mb-6">
+                    <label for="nombre" class="block mb-2 font-semibold">Nombre Completo</label>
+                    <input
+                      type="text"
+                      id="nombre"
+                      name="nombre"
+                      required
+                      class="w-full px-4 py-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-400 text-green-900"
+                    />
+                </div>
+                <div class="mb-6">
+                    <label for="email" class="block mb-2 font-semibold">Correo Electrónico</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
+                      class="w-full px-4 py-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-400 text-green-900"
+                    />
+                </div>
+                <div class="mb-6">
+                    <label for="mensaje" class="block mb-2 font-semibold">Mensaje</label>
+                    <textarea
+                      id="mensaje"
+                      name="mensaje"
+                      rows="5"
+                      required
+                      class="w-full px-4 py-2 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-400 text-green-900"
+                    ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  class="bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold py-3 px-6 rounded-full w-full transition"
+                >
+                    Enviar Mensaje
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Contador animado (impacto)
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const increment = target / 200;
+
+                if(count < target) {
+                    counter.innerText = Math.ceil(count + increment);
+                    setTimeout(updateCount, 10);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            updateCount();
+        });
+
+        // Temporizador torneo (cuenta regresiva)
+        const targetDate = new Date('2025-07-15T00:00:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                document.getElementById('countdown').innerHTML =
+                    "<span class='text-xl'>El torneo ya comenzó!</span>";
+                clearInterval(interval);
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor(
+                (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+            );
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        const interval = setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+
+</body>
+</html>
